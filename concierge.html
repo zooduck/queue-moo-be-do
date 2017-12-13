@@ -1,0 +1,95 @@
+<!doctype HTML>
+<html lang="en">
+	<head>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0">
+		<meta
+			name="author"
+			content="zooduck">
+
+		<style>
+			*{
+				box-sizing: border-box;
+				font: normal 16px calibri, sans-serif;
+			}
+			#resetDatabase {
+				position: absolute;
+				top: 5px;
+				left: 5px;
+			}
+			#servicesAvailable {
+				position: absolute;
+				top: 5px;
+				right: 5px;
+			}
+			content {
+				float: left;
+				width: 100%;
+				margin-top: 50px;
+			}
+			.staff, .customers {
+				float: left;				
+				width: 50%;
+				padding: 10px;
+			}
+			.staff {
+				
+			}
+			.staff .staff__member {
+				margin-top: 10px;
+				border: solid 1px;
+				box-shadow: 2px 2px 15px #ccc;
+				padding: 5px;
+			}
+			.staff .staff__member .staff__name {
+				font-size: 24px;
+			}
+			.staff .staff__member .staff--action-button {
+				float: right;
+				margin-left: 10px;
+			}
+			.customers .customer{
+				position: relative;
+				margin-top: 10px;
+				border: solid 1px;
+				padding: 5px;
+			}
+			.customers .customer .customer--action-button {
+				float: right;
+				margin-left: 10px;
+			}
+			.customers .customer .customer__ticket-ref {
+				position: absolute;
+				top: 0;
+				left: 0;
+				padding: 10px;
+				border: solid 0 #ccc;
+				border-width: 0 3px 0 0;
+				font-size: 19px;			
+				width: auto;
+				height: 100%;
+			}
+			.customers .customer .customer__wait-time, .customers .customer .customer__service {
+				margin-left: 50px;
+			}
+
+
+		</style>
+
+		<script src="admin_queue.js" defer></script>
+
+	</head>
+	<body>
+
+		<button id="resetDatabase" class="reset-database" onclick="resetDatabase()">RESET DATABASE</button>
+		<div id="servicesAvailable"></div>
+
+		<content>
+			<div id="staff" class="staff"></div>
+			<div id="customers" class="customers"></div>
+		</content>
+
+
+	</body>
+</html>

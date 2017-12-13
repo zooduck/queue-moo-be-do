@@ -29,12 +29,12 @@
 				margin-top: 50px;
 			}
 			.staff, .customers {
-				float: left;				
+				float: left;
 				width: 50%;
 				padding: 10px;
 			}
 			.staff {
-				
+
 			}
 			.staff .staff__member {
 				margin-top: 10px;
@@ -66,12 +66,27 @@
 				padding: 10px;
 				border: solid 0 #ccc;
 				border-width: 0 3px 0 0;
-				font-size: 19px;			
+				font-size: 19px;
 				width: auto;
 				height: 100%;
 			}
 			.customers .customer .customer__wait-time, .customers .customer .customer__service {
 				margin-left: 50px;
+			}
+
+			.queue-create-form-wrapper {
+				float: left;
+				margin-top: 10px;
+				border: solid 1px;
+				padding: 10px;
+			}
+
+			.queue-select-wrapper {
+				float: left;
+				clear: left;
+				margin-top: 10px;
+				padding: 10px;
+				border: solid 1px;
 			}
 
 
@@ -88,6 +103,23 @@
 		<content>
 			<div id="staff" class="staff"></div>
 			<div id="customers" class="customers"></div>
+
+			<div class="queue-create-form-wrapper">
+				<form id="queueCreate">
+					<label>Queue Name:</label> <input name="id" type="text" />
+					<label>tire_fit</label><input type="checkbox" name="tire_fit" />
+					<label>mot</label><input type="checkbox" name="mot" />
+					<label>car_wash</label><input type="checkbox" name="car_wash" />
+					<label>exhaust_fit</label><input type="checkbox" name="exhaust_fit" />
+					<label>oil_change</label><input type="checkbox" name="oil_change" />
+				</form>
+				<button onclick="createQueue()">CREATE QUEUE</button>
+		  </div>
+
+			<div class="queue-select-wrapper">
+				<label>SELECT A QUEUE:<label><select id="queueSelect"></select>
+				<button onclick="getQueueById()">Select</button>
+			</div>
 		</content>
 
 

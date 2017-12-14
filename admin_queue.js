@@ -436,9 +436,9 @@ const createQueue = () => {
 
 const getQueueById = (e) => {
 	let id;
-	if (e && e.target.nodeName == "BUTTON") {
+	if (e && e.target.nodeName == "BUTTON" || !SELECTED_QUEUE) {
 		id = document.querySelector("#queueSelect").value;
-	} else {
+	} else if (SELECTED_QUEUE){
 		id = SELECTED_QUEUE.id;
 	}
 

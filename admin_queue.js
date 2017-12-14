@@ -504,7 +504,7 @@ const pusherMock = () => {
 }
 setInterval(function(){
 	pusherMock();
-}, 1000);
+}, 5000);
 
 
 

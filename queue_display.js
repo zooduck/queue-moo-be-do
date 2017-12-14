@@ -33,8 +33,8 @@ const getAllQueues = () => {
     beingSeenWrapper.innerHTML = "";
     inQueueWrapper.innerHTML = "";
 		for (let queue of allQueues) {
-      let headerA = createDiv(queue.id, "header");
-      let headerB = createDiv(queue.id, "header");
+      let headerA = createDiv(`Being served from ${queue.id}`, "header");
+      let headerB = createDiv(`${queue.id} - Please wait`, "header");
       beingSeenWrapper.appendChild(headerA);
       inQueueWrapper.appendChild(headerB);
       for (let customer of queue.customers) {

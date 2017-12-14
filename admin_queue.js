@@ -555,7 +555,7 @@ const pusherMock = () => {
 }
 const poll = setInterval(function(){
 	pusherMock();
-}, 5000);
+}, 2500);
 
 const stopPoll = () => {
 	clearInterval(poll);

@@ -179,7 +179,7 @@ const generateStaffTemplate = () => {
 			staffTemplate += "<div class=\"staff__status\">duration_minutes: %_DURATION_%</div>";
 			staffTemplate += "<div class=\"staff__status\">start: %_START_%</div>";
 
-			staffTemplate += "<div class=\"staff__status\">REMAIN_MINUTES:</div>";
+			staffTemplate += "<div class=\"staff__name\">REMAIN_MINUTES:</div>";
 
     	staffTemplate += "</div>";
     return staffTemplate;

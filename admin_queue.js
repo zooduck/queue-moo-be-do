@@ -364,7 +364,13 @@ const serveCustomerComplete = (e) => {
 	let staffMember = localQueueData.staff.find((item) => {
 		return item.id == staffId;
 	});
-	console.log(staffMember);
+
+	// console.log(staffMember);
+
+	if (staffMember.status == "available") {
+		alert("STAFF_MEMBER_IS_NOT_SERVING_ANYONE");
+		return;
+	}
 
 	let customerId = staffMember.serving.id;
 	if (customerId) {

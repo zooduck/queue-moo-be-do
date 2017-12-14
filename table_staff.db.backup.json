@@ -1,0 +1,32 @@
+{
+  "staff": [
+    {
+      "id": "h90382trhr93",
+      "name": "kermit",
+      "services": ["tire_fit", "mot", "oil_change"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "fd215c67d",
+      "name": "gonzo",
+      "services": ["wheelbalance", "exhaust_fit"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "dew21e52",
+      "name": "cookie monster",
+      "services": ["mot", "exhaust_fit", "oil_change"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "pbdofkpo54yu09",
+      "name": "nicola",
+      "services": ["car_wash", "oil_change"],
+      "status": "available",
+      "serving": {}
+    }
+  ]
+}

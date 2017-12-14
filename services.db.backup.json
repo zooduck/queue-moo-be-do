@@ -1,0 +1,20 @@
+{
+  "oil_change": {
+    duration: 30
+  },
+  "wheelbalance": {
+    duration: 25
+  },
+  "tire_fit": {
+    duration: 50
+  },
+  "car_wash": {
+    duration: 45
+  },
+  "exhaust_fit": {
+    duration: 120
+  },
+  "mot": {
+    duration: 15
+  }
+}

@@ -37,13 +37,18 @@ const getAllQueues = () => {
       let headerB = createDiv(`${queue.id} - Please wait`, "header");
       beingSeenWrapper.appendChild(headerA);
       inQueueWrapper.appendChild(headerB);
+      let customersBeingSeen = false;
       for (let customer of queue.customers) {
         let div = createDiv(customer.ticketRef);
         if (customer.status == "being_seen") {
+          customersBeingSeen = true;
           beingSeenWrapper.appendChild(div);
         } else {
           inQueueWrapper.appendChild(div);
         }
+      }
+      if (!customersBeingSeen) {
+        headerA.parentNode.removeChild(headerA);
       }
 
 		}

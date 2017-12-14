@@ -137,6 +137,61 @@ if ($endpoint == "SERVICES_GET") {
 	$str = fopen($file, "r");
 	echo fread($str, filesize($file));
 }
+
+
+// ==========================
+// CUSTOMER_SERVE_COMPLETE
+// ==========================
+if ($endpoint == "CUSTOMER_SERVE_COMPLETE") {
+	$file_queues = "table_queues.db.json";
+	$file_staff = "table_staff.db.json";
+
+	// need to update staff member details and remove customer from queue...
+	$queuesObj = json_decode(file_get_contents($file_queues), true);
+	$staffObj = json_decode(file_get_contents($file_staff), true);
+
+	$queueId = $_GET["queueId"];
+	$staffId = $_GET["staffId"];
+	$customerId = $_GET["customerId"];
+
+	// update staff member details...
+	foreach($staffObj["staff"] as $key => $val) {
+		if ($staffObj["staff"][$key]["id"] == $staffId) {
+			$staffObj["staff"][$key]["status"] = "available";
+			$staffObj["staff"][$key]["serving"]["name"] = "";
+			$staffObj["staff"][$key]["serving"]["id"] = "";
+			$staffObj["staff"][$key]["serving"]["service"] = "";
+			$staffObj["staff"][$key]["serving"]["duration"] = "";
+			$staffObj["staff"][$key]["serving"]["start"] = "";
+		}
+	}
+
+
+	// remove customer from queue...
+	$filteredCustomers = [];
+	foreach ($queuesObj["queues"] as $key => $val) {
+		if ($queuesObj["queues"][$key]["id"] == $queueId) {
+			// remove customer from this queue...
+			foreach($queuesObj["queues"][$key]["customers"] as $k => $v) {
+				if ($v["id"] != $customerId) {
+					array_push($filteredCustomers, $v);
+				}
+			}
+			$queuesObj["queues"][$key]["customers"] = $filteredCustomers;
+		}
+	}
+
+
+	$queuesDb = fopen($file_queues, "w");
+	fwrite($queuesDb, json_encode($queuesObj));
+
+	$staffDb = fopen($file_staff, "w");
+	fwrite($staffDb, json_encode($staffObj));
+
+	echo json_encode($staffObj);
+
+}
+
 // ========================
 // CUSTOMER_SERVE
 // ========================
@@ -169,23 +224,22 @@ if ($endpoint == "CUSTOMER_SERVE") {
 			}
 		}
 
-		$filteredCustomers = [];
-		// remove customer from queue...
+
+
+		// update customer status from "in_queue" to "being_seen"
+		// $filteredCustomers = [];
 		foreach ($queuesObj["queues"] as $key => $val) {
 			if ($queuesObj["queues"][$key]["id"] == $queueId) {
-				// remove customer from this queue...
+				// set customer status to being_seen
 				foreach($queuesObj["queues"][$key]["customers"] as $k => $v) {
-					if ($v["id"] != $customerId) {
-						array_push($filteredCustomers, $v);
+					if ($v["id"] == $customerId) {
+						// array_push($filteredCustomers, $v);
+						$queuesObj["queues"][$key]["customers"][$k]["status"] = "being_seen";
 					}
 				}
-				$queuesObj["queues"][$key]["customers"] = $filteredCustomers;
+				// $queuesObj["queues"][$key]["customers"] = $filteredCustomers;
 			}
 		}
-
-
-		//echo "queuesObj =>" . json_encode($queuesObj);
-		//echo "filteredCustomers =>" . $filteredCustomers; exit;
 
 		$queuesDb = fopen($file_queues, "w");
 		fwrite($queuesDb, json_encode($queuesObj));
@@ -194,10 +248,6 @@ if ($endpoint == "CUSTOMER_SERVE") {
 		fwrite($staffDb, json_encode($staffObj));
 
 		echo json_encode($staffObj);
-
-		//echo "staffID: ". $staffId . "  customerId: " . $customerId . "service: " . $service . "start:" . $start;
-
-
 
 }
 
@@ -209,6 +259,8 @@ if ($endpoint == "CUSTOMER_ADD") {
 	$obj = json_decode(file_get_contents($file), true);
 	$customer;
 	$customer["id"] = $_POST["id"];
+
+
 	$customer["name"] = $_POST["name"];
 	$customer["service"] = $_POST["service"];
 	$customer["ticketRef"] = $_POST["ticketRef"];
@@ -219,6 +271,7 @@ if ($endpoint == "CUSTOMER_ADD") {
 	foreach($obj["queues"] as $key => $val) {
 		if ($val["id"] == $_POST["queueId"]) {
 			// this is the queue we need to add the customer to...
+			$customer["position"] = count($obj["queues"][$key]["customers"]);
 			array_push($obj["queues"][$key]["customers"], $customer);
 		}
 	}

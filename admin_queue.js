@@ -97,6 +97,10 @@ const customerServe = (queueId, staffId, customerId, customerName, service, dura
 	//alert(staffId + " => " + customerId);
 	return $http("GET", `api.php?endpoint=CUSTOMER_SERVE&queueId=${queueId}&staffId=${staffId}&customerId=${customerId}&customerName=${customerName}&service=${service}&duration=${duration}&start=${start}`);
 };
+const customerServeComplete = (queueId, staffId, customerId) => {
+	//alert(staffId + " => " + customerId);
+	return $http("GET", `api.php?endpoint=CUSTOMER_SERVE_COMPLETE&queueId=${queueId}&staffId=${staffId}&customerId=${customerId}`);
+};
 const staffMemberUpdate = () => {
 
 };
@@ -159,7 +163,9 @@ const staffUpdateRemainTime = () => {
 const generateStaffTemplate = () => {
 	 let staffTemplate = "<div class=\"staff__member %_STATUS_%\" id=\"%_ID_%\">";
 	    staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomer(event)\">Serve</button>";
-	    staffTemplate += "<button class=\"staff--action-button\">%_STATUS_%</button>";
+			staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomerComplete(event)\">Finish Serving</button>";
+
+	    //staffTemplate += "<button class=\"staff--action-button\">%_STATUS_%</button>";
 			staffTemplate += "<div class=\"staff__status\">id: %_ID_%</div>";
 	    staffTemplate += "<div class=\"staff__name\">%_NAME_%</div>";
     	staffTemplate += "<div class=\"staff__status\">status: %_STATUS_%</div>";
@@ -176,11 +182,12 @@ const generateStaffTemplate = () => {
     return staffTemplate;
 };
 const generateCustomerTemplate = () => {
-	 let customerTemplate = "<div class=\"customer\" ticket-ref=\"%_TICKET_REF_%\">";
+	 let customerTemplate = "<div class=\"customer %_STATUS_%\" ticket-ref=\"%_TICKET_REF_%\">";
 	    customerTemplate += "<button class=\"customer--action-button customer--remove\">Remove</button>";
 	    customerTemplate += "<div class=\"customer__ticket-ref\">%_TICKET_REF_%</div>";
 			customerTemplate += "<div class=\"customer__name\">id: %_ID_%</div>";
 	    customerTemplate += "<div class=\"customer__name\">%_NAME_%</div>";
+			customerTemplate += "<div class=\"customer__name\">status: %_STATUS_%</div>";
 	    customerTemplate += "<div class=\"customer__service\">Service: %_SERVICE_%</div>";
     	customerTemplate += "<div class=\"customer__wait-time\">Estimated wait time: %_WAIT_TIME_%</div>";
     	customerTemplate += "</div>";
@@ -207,6 +214,7 @@ const addCustomerToDOM = (customer) => {
     customerTemplate = customerTemplate.replace(/%_NAME_%/g, customer.name);
     customerTemplate = customerTemplate.replace(/%_WAIT_TIME_%/g, customer.waitTime);
     customerTemplate = customerTemplate.replace(/%_SERVICE_%/g, customer.service);
+		customerTemplate = customerTemplate.replace(/%_STATUS_%/g, customer.status);
 	customersWrapper.innerHTML += customerTemplate;
 };
 const clearView = () => {
@@ -295,9 +303,11 @@ const serveCustomer = (e) => {
 	});
 	let customerToServe = null;
 	for (let customer of localQueueData.customers) {
+		// serve the first customer that is waiting for a service associated with this staff member...
 		if (staffMember.services.indexOf(customer.service) != -1) {
 			//alert("you can serve " + customer.name);
 			customerToServe = customer;
+			break;
 		}
 	}
 
@@ -309,8 +319,30 @@ const serveCustomer = (e) => {
 			getQueueById();
 			pusherMock();
 		});
+	} else {
+		alert(`THERE_ARE_NO_CUSTOMERS_THAT_${staffMember.name}_CAN_SERVE`);
 	}
-}
+};
+
+const serveCustomerComplete = (e) => {
+	let queueId = localQueueData.id;
+	let staffId = e.target.parentNode.getAttribute("id");
+	let staffMember = localQueueData.staff.find((item) => {
+		return item.id == staffId;
+	});
+	console.log(staffMember);
+
+	let customerId = staffMember.serving.id;
+	if (customerId) {
+		let start = new Date().getTime();
+		customerServeComplete(SELECTED_QUEUE.id, staffMember.id, customerId).then((staffData) => {
+			console.log("customerServeComplete()", staffData);
+			localQueueData.staff = JSON.parse(staffData).staff;
+			getQueueById();
+			pusherMock();
+		});
+	}
+};
 
 // const resetDatabase = () => {
 // 	queueReset().then((queueData) => {

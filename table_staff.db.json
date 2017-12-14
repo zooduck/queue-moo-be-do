@@ -1,1 +1,32 @@
-{"staff":[{"id":"h90382trhr93","name":"kermit","services":["tire_fit","mot","oil_change"],"status":"busy","serving":{"id":"SOME_RANDOM_ID","name":"Mighty Mouse","service":"tire_fit","duration":60,"start":1513253363028}},{"id":"fd215c67d","name":"gonzo","services":["wheelbalance","exhaust_fit"],"status":"available","serving":[]},{"id":"dew21e52","name":"cookie monster","services":["mot","exhaust_fit","oil_change"],"status":"busy","serving":{"name":"rarity","id":"j0jj09hj","service":"mot","duration":"15","start":"1513262110985"}},{"id":"pbdofkpo54yu09","name":"nicola","services":["car_wash","oil_change"],"status":"busy","serving":{"name":"twilight sparkle","id":"apsdlas","service":"car_wash","duration":"45","start":"1513262104434"}}]}
+{
+  "staff": [
+    {
+      "id": "h90382trhr93",
+      "name": "kermit",
+      "services": ["tire_fit", "mot", "oil_change"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "fd215c67d",
+      "name": "gonzo",
+      "services": ["wheelbalance", "exhaust_fit"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "dew21e52",
+      "name": "cookie monster",
+      "services": ["mot", "exhaust_fit", "oil_change"],
+      "status": "available",
+      "serving": {}
+    },
+    {
+      "id": "pbdofkpo54yu09",
+      "name": "nicola",
+      "services": ["car_wash", "oil_change"],
+      "status": "available",
+      "serving": {}
+    }
+  ]
+}

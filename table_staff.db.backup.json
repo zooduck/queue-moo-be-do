@@ -4,14 +4,8 @@
       "id": "h90382trhr93",
       "name": "kermit",
       "services": ["tire_fit", "mot", "oil_change"],
-      "status": "busy",
-      "serving": {
-        "id": "SOME_RANDOM_ID",
-        "name": "Mighty Mouse",
-        "service": "tire_fit",
-        "duration": 60,
-        "start": 1513253363028
-      }
+      "status": "available",
+      "serving": {}
     },
     {
       "id": "fd215c67d",

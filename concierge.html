@@ -11,7 +11,13 @@
 		<style>
 			*{
 				box-sizing: border-box;
+
+			}
+			body, button, select, label {
 				font: normal 16px calibri, sans-serif;
+			}
+			select {
+				padding: 5px;
 			}
 			#resetDatabase {
 				position: absolute;
@@ -23,12 +29,12 @@
 				top: 5px;
 				right: 5px;
 				padding: 10px;
-				background: lime;
+				background: lightblue;
 			}
 			content {
 				float: left;
 				width: 100%;
-				margin-top: 50px;
+				/*margin-top: 50px;*/
 			}
 			.staff, .customers {
 				float: left;
@@ -52,7 +58,7 @@
 			.staff .staff__member.available {
 				border-color: lime;
 				border-width: 5px;
-				/*background: lime;*/
+		
 			}
 			.staff .staff__member .staff__name {
 				font-size: 24px;
@@ -60,6 +66,9 @@
 			.staff .staff__member .staff--action-button {
 				float: right;
 				margin-left: 10px;
+			}
+			.staff .staff__serving {
+				font-size: 24px;
 			}
 			.customers .customer{
 				position: relative;
@@ -72,18 +81,30 @@
 				margin-left: 10px;
 			}
 			.customers .customer .customer__ticket-ref {
-				position: absolute;
+				/*position: absolute;
 				top: 0;
-				left: 0;
+				left: 0;*/
+
+				float: left;
+				height: 90px;
+				width: 70px;
+				margin-right: 10px;
 				padding: 10px;
+
 				border: solid 0 #ccc;
 				border-width: 0 3px 0 0;
 				font-size: 19px;
-				width: auto;
-				height: 100%;
+
+				height: 90px;
+
+
 			}
 			.customers .customer .customer__wait-time, .customers .customer .customer__service, .customers .customer__name {
-				margin-left: 50px;
+				margin-left: 10px;
+			}
+
+			.customers .customer__name {
+				font-size: 24px;
 			}
 
 
@@ -95,6 +116,7 @@
 			.queue-create-form-wrapper, .add-customer-form-wrapper {
 				float: left;
 				clear: left;
+				margin-left: 10px;
 				margin-top: 10px;
 				border: solid 1px;
 				padding: 10px;
@@ -103,6 +125,7 @@
 			.queue-select-wrapper {
 				float: left;
 				clear: left;
+				margin-left: 10px;
 				margin-top: 10px;
 				padding: 10px;
 				border: solid 1px;
@@ -110,6 +133,24 @@
 
 			form {
 				margin-bottom: 10px;
+			}
+
+			button#stopPoll {
+				position: absolute;
+				top: 5px;
+				left: 300px;
+			}
+
+			#queueNameHeader {
+				float: left;
+				margin-left: 10px;
+				margin-top: 40px;
+				background: tomato;
+				color: #fff;
+				padding: 10px;
+			}
+			#queueNameHeader h1 {
+				line-height: 1px;
 			}
 
 
@@ -121,7 +162,19 @@
 	<body>
 
 		<button id="resetDatabase" class="reset-database" onclick="resetAllDatabases()">RESET ALL DATABASES</button>
+		<button id="stopPoll" onclick="stopPoll()">STOP POLL</button>
+
+
 		<div id="servicesAvailable"></div>
+
+
+		<div class="queue-name-header" id="queueNameHeader"><h1></h1></div>
+
+			<!-- SELECT QUEUE -->
+		<div class="queue-select-wrapper">
+			<label>Select Queue:<label> <select id="queueSelect"></select>
+			<button onclick="getQueueById(event)">SELECT</button>
+		</div>
 
 		<content>
 			<div id="staff" class="staff"></div>
@@ -155,11 +208,7 @@
 		  		<button onclick="addCustomerToQueue()">ADD CUSTOMER TO QUEUE</button>
 		  	</div>
 
-		    <!-- SELECT QUEUE -->
-			<div class="queue-select-wrapper">
-				<label>SELECT A QUEUE:<label><select id="queueSelect"></select>
-				<button onclick="getQueueById(event)">Select</button>
-			</div>
+
 		</content>
 
 

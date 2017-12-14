@@ -174,7 +174,7 @@ const generateStaffTemplate = () => {
     	staffTemplate += "<div class=\"staff__status\">status: %_STATUS_%</div>";
     	staffTemplate += "<div class=\"staff__services\">services: %_SERVICES_%</div>";
 
-			staffTemplate += "<div class=\"staff__status\">serving: %_SERVING_%</div>";
+			staffTemplate += "<div class=\"staff__serving\">serving: %_SERVING_%</div>";
 			staffTemplate += "<div class=\"staff__status\">service: %_SERVICE_%</div>";
 			staffTemplate += "<div class=\"staff__status\">duration_minutes: %_DURATION_%</div>";
 			staffTemplate += "<div class=\"staff__status\">start: %_START_%</div>";
@@ -188,11 +188,11 @@ const generateCustomerTemplate = () => {
 	 let customerTemplate = "<div class=\"customer %_STATUS_%\" ticket-ref=\"%_TICKET_REF_%\">";
 	    customerTemplate += "<button class=\"customer--action-button customer--remove\">Remove</button>";
 	    customerTemplate += "<div class=\"customer__ticket-ref\">%_TICKET_REF_%</div>";
-			customerTemplate += "<div class=\"customer__name\">id: %_ID_%</div>";
+			customerTemplate += "<div class=\"customer__service\">id: %_ID_%</div>";
 	    customerTemplate += "<div class=\"customer__name\">%_NAME_%</div>";
-			customerTemplate += "<div class=\"customer__name\">status: %_STATUS_%</div>";
-	    customerTemplate += "<div class=\"customer__service\">Service: %_SERVICE_%</div>";
-    	customerTemplate += "<div class=\"customer__wait-time\">Estimated wait time: %_WAIT_TIME_%</div>";
+			customerTemplate += "<div class=\"customer__service\">status: %_STATUS_%</div>";
+	    customerTemplate += "<div class=\"customer__service\">service: %_SERVICE_%</div>";
+    	customerTemplate += "<div class=\"customer__wait-time\">estimated wait time: %_WAIT_TIME_%</div>";
     	customerTemplate += "</div>";
     return customerTemplate;
 };
@@ -253,7 +253,7 @@ const addServiceCheckboxAndRadios = () => {
 		let label = document.createElement("LABEL");
 		let input = document.createElement("INPUT");
 		input.setAttribute("type", "checkbox");
-		input.setAttribute("name", "service");
+		input.setAttribute("name", serviceName);
 		label.innerHTML = serviceName;
 		input.value = serviceName;
 		queueCreateForm.appendChild(label);
@@ -472,6 +472,8 @@ const getQueueById = (e) => {
 		id = SELECTED_QUEUE.id;
 	}
 
+	document.querySelector("#queueNameHeader").children[0].innerHTML = id;
+
 	let queue = {};
 
 
@@ -545,9 +547,15 @@ const pusherMock = () => {
 	staffUpdateRemainTime();
 
 }
-setInterval(function(){
+const poll = setInterval(function(){
 	pusherMock();
 }, 5000);
+
+const stopPoll = () => {
+	clearInterval(poll);
+}
+
+
 
 
 

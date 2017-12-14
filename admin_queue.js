@@ -434,11 +434,14 @@ const createQueue = () => {
 };
 
 
-const getQueueById = () => {
-	let id = document.querySelector("#queueSelect").value;
-	if (SELECTED_QUEUE.id) {
+const getQueueById = (e) => {
+	let id;
+	if (e && e.target.nodeName == "BUTTON") {
+		id = document.querySelector("#queueSelect").value;
+	} else {
 		id = SELECTED_QUEUE.id;
-	}	
+	}
+
 	let queue = {};
 
 

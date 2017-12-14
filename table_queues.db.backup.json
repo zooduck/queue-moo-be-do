@@ -5,24 +5,30 @@
       "services": ["oil_change", "mot"],
       "customers": [
     		{
+          "id": "2eu9019",
+          "position": 0,
     			"name": "fluttershy",
     			"service": "tire_fit",
     			"status": "in_queue",
-    			"waitTime": "1 hour",
+    			"waitTime": "TODO",
     			"ticketRef": "12"
     		},
     		{
+          "id": "j0jj09hj",
+          "position": 1,
     			"name": "rarity",
     			"service": "mot",
     			"status": "in_queue",
-    			"waitTime": "1 hour",
+    			"waitTime": "TODO",
     			"ticketRef": "13"
     		},
         {
+          "id": "apsdlas",
+          "position": 2,
           "name": "twilight sparkle",
           "service": "car_wash",
           "status": "in_queue",
-          "waitTime": "1 hour",
+          "waitTime": "TODO",
           "ticketRef": "14"
         }
     	]
@@ -32,17 +38,21 @@
       "services": ["car_wash"],
       "customers": [
         {
+          "id": "t6732r3tr6",
+          "position": 0,
           "name": "pinkie pie",
           "service": "car_wash",
           "status": "in_queue",
-          "waitTime": "1 hour",
+          "waitTime": "TODO",
           "ticketRef": "127"
         },
         {
+          "id": "wcdgqfcdf",
+          "position": 1,
           "name": "rainbow dash",
           "service": "car_wash",
           "status": "in_queue",
-          "waitTime": "1 hour",
+          "waitTime": "TODO",
           "ticketRef": "128"
         }
       ]

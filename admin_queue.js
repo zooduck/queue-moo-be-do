@@ -301,6 +301,10 @@ const serveCustomer = (e) => {
 	let staffMember = localQueueData.staff.find((item) => {
 		return item.id == staffId;
 	});
+	if (staffMember.status != "available") {
+		alert("SORRY_THAT_STAFF_MEMBER_IS_BUSY");
+		return;
+	}
 	let customerToServe = null;
 	for (let customer of localQueueData.customers) {
 		// serve the first customer that is waiting for a service associated with this staff member...
@@ -422,7 +426,10 @@ const createQueue = () => {
 	console.log("services:", services);
 
 	 queueCreate(formData).then((queueData) => {
-		 console.log("QUEUE CREATED, QUEUES ARRAY UPDATED!", JSON.parse(queueData));
+		 console.log("createQueue()", JSON.parse(queueData));
+		 localQueueData = JSON.parse(queueData);
+		 getQueueById();
+		 getAllQueues();
 	 });
 };
 

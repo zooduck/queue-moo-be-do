@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font: normal 16px calibri, sans-serif;
+    }
+
+    .being_seen, .in_queue {
+      float: left;      
+      width: 50%;
+      padding: 20px;
+    }
+
+    .being_seen div, .in_queue div {
+      background: lightblue;
+      padding: 10px;
+      margin-top: 5px;
+    }
+
+    .being_seen .header, .in_queue .header {
+      background: #ccc;
+      color: #222;
+      font-weight: bold;
+    }
+
+    .being_seen .header:not(:first-of-type), .in_queue .header:not(:first-of-type) {
+      margin-top: 20px;
+    }
+
+    .in_queue div {
+      background: lime;
+    }
+
+
+  </style>
+
+
+  <script src="queue_display.js" defer></script>
+
+</head>
+
+<body>
+
+
+  <content>
+    <div id="beingSeen" class="being_seen"></div>
+    <div id="inQueue" class="in_queue"></div>
+  </content>
+
+
+
+
+
+</body>
+</html>

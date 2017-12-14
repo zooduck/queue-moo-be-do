@@ -64,6 +64,10 @@ const pusherMock = () => {
   getAllQueues();
 };
 
-setInterval(function(){
+const poll = setInterval(function(){
   pusherMock();
 }, 2500);
+
+const stopPoll = () => {
+  clearInterval(poll);
+};

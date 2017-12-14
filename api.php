@@ -4,13 +4,35 @@ $endpoint = $_GET["endpoint"];
 
 
 // reset everything (for testing)
+if ($endpoint == "TOTAL_RESET") {
+	$table_queues_file = "table_queues.db.json";
+	$table_staff_file = "table_staff.db.json";
+	$table_queues_backup_file = "table_queues.db.backup.json";
+	$table_staff_backup_file = "table_staff.db.backup.json";
+
+	$table_queues_backup_resource = file_get_contents($table_queues_backup_file);
+	$table_staff_backup_resource = file_get_contents($table_staff_backup_file);
+
+	$q = fopen($table_queues_file, "w");
+	fwrite($q, $table_queues_backup_resource);
+	$s = fopen($table_staff_file, "w");
+	fwrite($s, $table_staff_backup_resource);
+
+
+	echo "ALL DATABASES RESET!";
+}
+
 if ($endpoint == "QUEUE_RESET") {
+
 	//$jsonDbBackup = fopen("db_backup_DO_NOT_DELETE.json", "r");
 	$jsonDbBackup = file_get_contents("db_backup_DO_NOT_DELETE.json");
 	$db = fopen("db.json", "w");
 	fwrite($db, $jsonDbBackup);
 
 	$updatedDb = fopen("db.json", "r");
+
+
+
 
 	// ECHO DATABASE AS A JSON...
 	echo fread($updatedDb, filesize("db.json"));
@@ -32,7 +54,7 @@ if ($endpoint == "QUEUE_GET_BY_ID") {
 	$id = $_GET["id"];
 	$tableQueues = file_get_contents("table_queues.db.json");
 	$tableQueuesObj = json_decode($tableQueues, true);
-	$queue = new class{};
+	$queue;
 	foreach($tableQueuesObj["queues"] as $key => $val) {
 		// echo "key" . $key . "val" .  $val;
 		if ($val["id"] == $id) {
@@ -106,6 +128,35 @@ if ($endpoint == "QUEUE_DELETE") {
 	echo "QUEUE_DELETE";
 }
 
+// =========================
+// CUSTOMER_ADD
+// =========================
+if ($endpoint == "CUSTOMER_ADD") {
+	$file = "table_queues.db.json";
+	$obj = json_decode(file_get_contents($file), true);
+	$customer;
+	$customer["name"] = $_POST["name"];
+	$customer["service"] = $_POST["service"];
+	$customer["ticketRef"] = $_POST["ticketRef"];
+	$customer["status"] = $_POST["status"];
+	$customer["waitTime"] = $_POST["waitTime"];
+
+	
+	foreach($obj["queues"] as $key => $val) {
+		if ($val["id"] == $_POST["queueId"]) {
+			// this is the queue we need to add the customer to...
+			array_push($obj["queues"][$key]["customers"], $customer);
+		}
+	}
+
+	$db = fopen($file, "w");
+	fwrite($db, json_encode($obj));
+	$updatedDb = fopen($file, "r");
+
+	// ECHO DATABASE AS A JSON...
+	echo fread($updatedDb, filesize($file));
+}
+
 
 // ============================
 // CUSTOMER_DELETE
@@ -124,60 +175,39 @@ if ($endpoint == "CUSTOMER_DELETE") {
 
 	$queues = $jsonDbObj["queues"];
 
-	function filterByTicketRef($customer) {
-		echo "is " . $customer["ticketRef"] . "!=" . $_GET["ticketRef"];
-		return $customer["ticketRef"] != $_GET["ticketRef"];
-	}
+	// function filterByTicketRef($customer) {
+	// 	//echo "is " . $customer["ticketRef"] . "!=" . $_GET["ticketRef"];
+	// 	return $customer["ticketRef"] != $_GET["ticketRef"];
+	// }
 
+	$filteredCustomers = [];
 	foreach($queues as $queue) {
-		echo "is " . $queueId . "==" . $queue["id"];
-		if ($queue["id"] == $queueId) {
-			echo "QUEUE IS SAME>>>>>>>>>>>>>>>>>>>>>>>>>";
-			$filteredCustomers = array_filter($queue["customers"], "filterByTicketRef");
+		if ($queue["id"] == $queueId) {			
+			foreach($queue["customers"] as $customer) {
+				if ($customer["ticketRef"] != $_GET["ticketRef"]) {
+					array_push($filteredCustomers, $customer);
+				}
+			}
+			//$filteredCustomers = array_filter($queue["customers"], "filterByTicketRef");
 		}
 	}
 
-	//echo "filteredCustomers" . json_encode($filteredCustomers);
+	// echo "filteredCustomers =>" . json_encode($filteredCustomers);
 
-	foreach($jsonDbObj["queues"] as $queue) {
-		if ($queue["id"] == $queueId) {
-			echo "GOT HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE";
-			// THIS DOES NOT SEEM TO ALTER THE jsonDbObj!!!! WHYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY NOT?????????????????????????????
-			$queue["customers"] = $filteredCustomers;
+	foreach($jsonDbObj["queues"] as $key => $val) {		
+		if ($jsonDbObj["queues"][$key]["id"] == $queueId) {
+			$jsonDbObj["queues"][$key]["customers"] = $filteredCustomers;
 		}
-	}
-	echo "you asked me to remove " . $ticketRef . " from queue id of " . $queueId;
-	echo "NEW QUEUE DATABASE LOOKS LIKE =>" . json_encode($jsonDbObj);
-	exit;
-
-
-
-
-
-
-
-
-
-	function filterByTicketRef_ERR($customer) {
-		return $customer["ticketRef"] != $_GET["ticketRef"];
-	}
-	$filteredCustomers = array_filter($jsonDbObj["customers"], "filterByTicketRef_ERR");
-
-
-	$jsonDbObj["customers"] = [];
-	foreach ($filteredCustomers as $customer) {
-		array_push($jsonDbObj["customers"], $customer);
 	}
 
 	$updatedJsonDb = json_encode($jsonDbObj);
-
-	$db = fopen("db.json", "w");
+	$db = fopen($file, "w");
 	fwrite($db, $updatedJsonDb);
 
-	$updatedDb = fopen("db.json", "r");
-
+	$updatedDb = fopen($file, "r");
 	// ECHO DATABASE AS A JSON...
-	echo fread($updatedDb, filesize("db.json"));
+	echo fread($updatedDb, filesize($file));
+
 }
 
 

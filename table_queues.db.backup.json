@@ -17,7 +17,14 @@
     			"status": "in_queue",
     			"waitTime": "1 hour",
     			"ticketRef": "13"
-    		}
+    		},
+        {
+          "name": "twilight sparkle",
+          "service": "car_wash",
+          "status": "in_queue",
+          "waitTime": "1 hour",
+          "ticketRef": "14"
+        }
     	]
     },
     {
@@ -29,14 +36,14 @@
           "service": "car_wash",
           "status": "in_queue",
           "waitTime": "1 hour",
-          "ticketRef": "12"
+          "ticketRef": "127"
         },
         {
           "name": "rainbow dash",
           "service": "car_wash",
           "status": "in_queue",
           "waitTime": "1 hour",
-          "ticketRef": "13"
+          "ticketRef": "128"
         }
       ]
     }

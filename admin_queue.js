@@ -55,6 +55,10 @@ const queueCreate = (formData) => {
 
 };
 
+const customerAdd = (formData) => {
+	return $http("POST", "api.php?endpoint=CUSTOMER_ADD", formData);
+};
+
 const queuesGetAll = () => {
 	return $http("GET", "api.php?endpoint=QUEUES_GET_ALL");
 };
@@ -94,6 +98,9 @@ const staffMemberUpdate = () => {
 const queueReset = () => {
 	return $http("GET", "api.php?endpoint=QUEUE_RESET");
 };
+const TOTAL_RESET = () => {
+	return $http("GET", "api.php?endpoint=TOTAL_RESET");
+};
 
 
 
@@ -113,6 +120,7 @@ const queueReset = () => {
 // VIEW...
 // TODO!!! MOVE TO VIEW.JS
 // =========================
+let SELECTED_QUEUE = null;
 const content = document.querySelector("content"); console.log(content);
 const staffWrapper = document.querySelector("#staff");
 const customersWrapper = document.querySelector("#customers");
@@ -122,12 +130,13 @@ const queueDataChanged = (newData, oldData) => {
 	return JSON.stringify(newData) != JSON.stringify(oldData);
 };
 const generateStaffTemplate = () => {
-	 let staffTemplate = "<div class=\"staff__member\">";
+	 let staffTemplate = "<div class=\"staff__member %_STATUS_%\">";
 	    staffTemplate += "<button class=\"staff--action-button\">Serve</button>";
 	     staffTemplate += "<button class=\"staff--action-button\">%_STATUS_%</button>";
 	    staffTemplate += "<div class=\"staff__name\">%_NAME_%</div>";
-    	staffTemplate += "<div class=\"staff__status\">%_STATUS_% %_SERVING_%</div>";
-    	staffTemplate += "<div class=\"staff__services\">%_SERVICES_%</div>";
+    	staffTemplate += "<div class=\"staff__status\">status: %_STATUS_%</div>";
+    	staffTemplate += "<div class=\"staff__status\">serving: %_SERVING_%</div>";
+    	staffTemplate += "<div class=\"staff__services\">services: %_SERVICES_%</div>";
     	staffTemplate += "</div>";
     return staffTemplate;
 };
@@ -135,6 +144,7 @@ const generateCustomerTemplate = () => {
 	 let customerTemplate = "<div class=\"customer\" ticket-ref=\"%_TICKET_REF_%\">";
 	    customerTemplate += "<button class=\"customer--action-button customer--remove\">Remove</button>";
 	    customerTemplate += "<div class=\"customer__ticket-ref\">%_TICKET_REF_%</div>";
+	    customerTemplate += "<div class=\"customer__name\">%_NAME_%</div>";
 	    customerTemplate += "<div class=\"customer__service\">Service: %_SERVICE_%</div>";
     	customerTemplate += "<div class=\"customer__wait-time\">Estimated wait time: %_WAIT_TIME_%</div>";
     	customerTemplate += "</div>";
@@ -151,6 +161,7 @@ const addStaffMemberToDOM = (staffMember) => {
 const addCustomerToDOM = (customer) => {
 	let customerTemplate = generateCustomerTemplate();
     customerTemplate = customerTemplate.replace(/%_TICKET_REF_%/g, customer.ticketRef);
+    customerTemplate = customerTemplate.replace(/%_NAME_%/g, customer.name);
     customerTemplate = customerTemplate.replace(/%_WAIT_TIME_%/g, customer.waitTime);
     customerTemplate = customerTemplate.replace(/%_SERVICE_%/g, customer.service);
 	customersWrapper.innerHTML += customerTemplate;
@@ -196,6 +207,18 @@ const buildView = () => {
 			customerRemove(ticketRef, localQueueData.id);
 		});
 	}
+
+	let customerAddServiceRadioButtons = document.querySelectorAll("#customerAdd input[type=radio]");
+	for (let radioButton of customerAddServiceRadioButtons) {
+		radioButton.removeAttribute("hidden");
+		radioButton.previousSibling.removeAttribute("hidden");
+	}
+	for (let radioButton of customerAddServiceRadioButtons) {		
+		if (localQueueData.services.indexOf(radioButton.value) == -1) {			
+			radioButton.setAttribute("hidden", true);
+			radioButton.previousSibling.setAttribute("hidden", true);
+		}
+	}
 };
 const customerRemove = (ticketRef, queueId) => {
 	customerDeleteFromQueue(ticketRef, queueId).then((queueData) => {
@@ -203,20 +226,63 @@ const customerRemove = (ticketRef, queueId) => {
 		if (queueDataChanged(JSON.parse(queueData), localQueueData)) {
 			// queue data is different! update view
 			console.warn("QUEUE DATA CHANGED!");
-			localQueueData = JSON.parse(queueData);
-			buildView();
+			console.log("customerRemove():", JSON.parse(queueData));
+			localQueueData["queues"] = JSON.parse(queueData);
+			//buildView();
+			getQueueById();
 		}
 	});
 };
 
-const resetDatabase = () => {
-	queueReset().then((queueData) => {
-		console.warn("QUEUE DATA RESET!");
-		localQueueData = JSON.parse(queueData);
-		buildView();
+// const resetDatabase = () => {
+// 	queueReset().then((queueData) => {
+// 		console.warn("QUEUE DATA RESET!");
+// 		localQueueData = JSON.parse(queueData);
+// 		buildView();		
+// 	});
+// };
+const resetAllDatabases = () => {
+	TOTAL_RESET().then((response) => {
+		console.warn(response);		
+		getAllQueues();
+		queueSelect.options[0].selected = true;	
+		getQueueById();
 	});
 };
 
+
+const addCustomerToQueue = () => {
+
+	if (!SELECTED_QUEUE) {
+		alert("YOU DID NOT SELECT A QUEUE YET");
+		return;
+	}
+	
+
+	let formEl = document.querySelector("#customerAdd");	
+	let formData = new FormData(formEl);
+
+	
+	if (!formData.get("service")) {
+		alert("YOU MUST SELECT A SERVICE");
+		return;
+	}
+
+	if (localQueueData.services.indexOf(formData.get("service")) == -1) {
+		alert("THAT SERVICE IS NOT AVAIALBLE IN THIS QUEUE");
+		return;
+	}
+
+	formData.append("status", "in_queue");
+	formData.append("waitTime", "1 hour");
+	formData.append("ticketRef", Math.round(Math.random() * 1000));
+	formData.append("queueId", document.querySelector("#queueSelect").value);
+
+	customerAdd(formData).then((queueData) => {
+		console.log("addCustomerToQueue()", queueData);
+		getQueueById();
+	});
+};
 
 const createQueue = () => {
 
@@ -235,6 +301,10 @@ const createQueue = () => {
 		}
 		console.log(key, val);
 	}
+	if (services.length < 1) {
+		alert("QUEUE_MUST_HAVE_AT_LEAST_1_SERVICE");
+		return;
+	}
 	formData.append("services", services);
 
 	console.log("services:", services);
@@ -248,6 +318,8 @@ const createQueue = () => {
 const getQueueById = () => {
 	let id = document.querySelector("#queueSelect").value;
 	let queue = {};
+
+
 	queueGetById(id).then((queueData) => {
 		console.log("GET QUEUE BY ID", JSON.parse(queueData));
 
@@ -255,6 +327,9 @@ const getQueueById = () => {
 		queue.id = JSON.parse(queueData).id;
 		queue.customers = JSON.parse(queueData).customers;
 		queue.services = services;
+
+
+		SELECTED_QUEUE = queue;
 
 		console.log("services for selected queue", services);
 
@@ -284,20 +359,27 @@ const getQueueById = () => {
 // });
 
 
-
+// ===================================================
 // get all queues and add them to dropdown list...
-queuesGetAll().then((queueData) => {
-	let allQueues = JSON.parse(queueData).queues;
-	const queueSelectEl = document.querySelector("#queueSelect");
-	queueSelectEl.innerHTML = "";
-	for (let queue of allQueues) {
-		console.log("queue id", queue.id);
-		let opt = document.createElement("OPTION");
-		opt.innerHTML = queue.id;
-		queueSelectEl.appendChild(opt);
-	}
-	console.log("ALL QUEUES:", JSON.parse(queueData));
-});
+// ===================================================
+const getAllQueues = () => {
+	queuesGetAll().then((queueData) => {
+		let allQueues = JSON.parse(queueData).queues;
+		const queueSelectEl = document.querySelector("#queueSelect");
+		queueSelectEl.innerHTML = "";
+		for (let queue of allQueues) {
+			console.log("queue id", queue.id);
+			let opt = document.createElement("OPTION");
+			opt.innerHTML = queue.id;
+			queueSelectEl.appendChild(opt);
+		}		
+		console.log("getAllQueues(): ", JSON.parse(queueData));
+	});
+};
+
+// INIT
+getAllQueues();
+
 
 // queueCreate(['tire_fit', 'mot']).then((queueData) => {
 // 	console.log(queueData);

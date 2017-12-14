@@ -1,0 +1,28 @@
+{
+  "staff": [
+    {
+      "name": "kermit",
+      "services": ["tire_fit", "mot", "oil_change"],
+      "status": "busy",
+      "serving": ""
+    },
+    {
+      "name": "gonzo",
+      "services": ["wheelbalance", "exhaust_fit"],
+      "status": "available",
+      "serving": ""
+    },
+    {
+      "name": "cookie monster",
+      "services": ["mot", "exhaust_fit", "oil_change"],
+      "status": "available",
+      "serving": ""
+    },
+    {
+      "name": "nicola",
+      "services": ["car_wash", "oil_change"],
+      "status": "available",
+      "serving": ""
+    }
+  ]
+}

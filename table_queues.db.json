@@ -1,1 +1,51 @@
-{"queues":[{"id":"QUEUE A","services":["oil_change","mot"],"customers":[{"name":"fluttershy","service":"tire_fit","status":"in_queue","waitTime":"1 hour","ticketRef":"12"},{"name":"rarity","service":"mot","status":"in_queue","waitTime":"1 hour","ticketRef":"13"}]},{"id":"QUEUE B","services":["car_wash"],"customers":[{"name":"pinkie pie","service":"car_wash","status":"in_queue","waitTime":"1 hour","ticketRef":"12"},{"name":"rainbow dash","service":"car_wash","status":"in_queue","waitTime":"1 hour","ticketRef":"13"}]},{"id":"test","services":["mot","car_wash","exhaust_fit"],"customers":[]}]}
+{
+  "queues": [
+    {
+      "id": "QUEUE A",
+      "services": ["oil_change", "mot"],
+      "customers": [
+    		{
+    			"name": "fluttershy",
+    			"service": "tire_fit",
+    			"status": "in_queue",
+    			"waitTime": "1 hour",
+    			"ticketRef": "12"
+    		},
+    		{
+    			"name": "rarity",
+    			"service": "mot",
+    			"status": "in_queue",
+    			"waitTime": "1 hour",
+    			"ticketRef": "13"
+    		},
+        {
+          "name": "twilight sparkle",
+          "service": "car_wash",
+          "status": "in_queue",
+          "waitTime": "1 hour",
+          "ticketRef": "14"
+        }
+    	]
+    },
+    {
+      "id": "QUEUE B",
+      "services": ["car_wash"],
+      "customers": [
+        {
+          "name": "pinkie pie",
+          "service": "car_wash",
+          "status": "in_queue",
+          "waitTime": "1 hour",
+          "ticketRef": "127"
+        },
+        {
+          "name": "rainbow dash",
+          "service": "car_wash",
+          "status": "in_queue",
+          "waitTime": "1 hour",
+          "ticketRef": "128"
+        }
+      ]
+    }
+  ]
+}

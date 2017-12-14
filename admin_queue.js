@@ -498,11 +498,13 @@ getAllQueues();
 
 // PUSHER MOCK
 const pusherMock = () => {
+	getQueueById();
 	staffUpdateRemainTime();
+
 }
 setInterval(function(){
 	pusherMock();
-}, 30000);
+}, 1000);
 
 
 

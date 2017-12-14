@@ -141,6 +141,9 @@ const queueDataChanged = (newData, oldData) => {
 };
 
 const staffUpdateRemainTime = () => {
+	if (!localQueueData.staff) {
+		return;
+	}
 	for (let staffMember of localQueueData.staff) {
 		if (staffMember.serving.start > 0) {
 			// calculate remaining time of appointment...
@@ -227,9 +230,36 @@ const getServices = () => {
 		//console.log("servicesData", servicesData);
 		localServicesData = JSON.parse(servicesData);
 		console.log("localServicesData =>", localServicesData);
+
+		addServiceCheckboxAndRadios();
 		//console.log(JSON.parse(servicesData));
 	});
 };
+
+const addServiceCheckboxAndRadios = () => {
+	let customerAddForm = document.querySelector("#customerAdd");
+	for (serviceName in localServicesData) {
+		let label = document.createElement("LABEL");
+		let input = document.createElement("INPUT");
+		input.setAttribute("type", "radio");
+		input.setAttribute("name", "service");
+		label.innerHTML = serviceName;
+		input.value = serviceName;
+		customerAddForm.appendChild(label);
+		customerAddForm.appendChild(input);
+	}
+	let queueCreateForm = document.querySelector("#queueCreate");
+	for (serviceName in localServicesData) {
+		let label = document.createElement("LABEL");
+		let input = document.createElement("INPUT");
+		input.setAttribute("type", "checkbox");
+		input.setAttribute("name", "service");
+		label.innerHTML = serviceName;
+		input.value = serviceName;
+		queueCreateForm.appendChild(label);
+		queueCreateForm.appendChild(input);
+	}
+}
 
 const buildView = () => {
 

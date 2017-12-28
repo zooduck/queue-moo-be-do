@@ -19,11 +19,7 @@
 			select {
 				padding: 5px;
 			}
-			#resetDatabase {
-				position: absolute;
-				top: 5px;
-				left: 5px;
-			}
+
 			#servicesAvailable {
 				position: absolute;
 				top: 5px;
@@ -133,7 +129,7 @@
 
 			.queue-select-wrapper {
 				float: left;
-				clear: left;
+				/*clear: left;*/
 				margin-left: 10px;
 				margin-top: 10px;
 				padding: 10px;
@@ -144,22 +140,30 @@
 				margin-bottom: 10px;
 			}
 
-			button#stopPoll {
-				position: absolute;
-				top: 5px;
-				left: 300px;
-			}
+
 
 			#queueNameHeader {
 				float: left;
 				margin-left: 10px;
-				margin-top: 40px;
+				/*margin-top: 40px;*/
 				background: tomato;
 				color: #fff;
 				padding: 10px;
 			}
 			#queueNameHeader h1 {
 				line-height: 1px;
+			}
+
+
+			button#resetDatabase {
+				position: absolute;
+				bottom: 5px;
+				left: 5px;
+			}
+			button#stopPoll {
+				position: absolute;
+				bottom: 5px;
+				right: 5px;
 			}
 
 
@@ -170,8 +174,8 @@
 	</head>
 	<body>
 
-		<button id="resetDatabase" class="reset-database" onclick="resetAllDatabases()">RESET ALL DATABASES</button>
-		<button id="stopPoll" onclick="stopPoll()">STOP POLL</button>
+		<button id="resetDatabase" class="reset-database" onclick="resetAllDatabases()">RESET</button>
+		<button id="stopPoll" class="stop-poll" onclick="stopPoll()">STOP POLL</button>
 
 
 		<div id="servicesAvailable"></div>
@@ -181,8 +185,7 @@
 
 			<!-- SELECT QUEUE -->
 		<div class="queue-select-wrapper">
-			<label>Select Queue:<label> <select id="queueSelect"></select>
-			<button onclick="getQueueById(event)">SELECT</button>
+			<label>SWITCH</label> <select id="queueSelect" onchange="getQueueById(event)"></select>
 		</div>
 
 		<content>

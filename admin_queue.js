@@ -165,8 +165,8 @@ const staffUpdateRemainTime = () => {
 
 const generateStaffTemplate = () => {
 	 let staffTemplate = "<div class=\"staff__member %_STATUS_%\" id=\"%_ID_%\">";
-	    staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomer(event)\">Serve</button>";
-			staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomerComplete(event)\">Finish Serving</button>";
+	    staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomer(event)\" %_SERVE_%>Serve</button>";
+			staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomerComplete(event)\" %_FINISH_SERVING_%>Finish Serving</button>";
 
 	    //staffTemplate += "<button class=\"staff--action-button\">%_STATUS_%</button>";
 			staffTemplate += "<div class=\"staff__status\">id: %_ID_%</div>";
@@ -198,15 +198,23 @@ const generateCustomerTemplate = () => {
 };
 const addStaffMemberToDOM = (staffMember) => {
 	let staffTemplate = generateStaffTemplate();
+
+		if (staffMember.status === "available") {
+			staffTemplate = staffTemplate.replace(/%_FINISH_SERVING_%/, "hidden");
+		}
+		if (staffMember.status === "busy") {
+			staffTemplate = staffTemplate.replace(/%_SERVE_%/, "hidden");
+		}
+
 		staffTemplate = staffTemplate.replace(/%_ID_%/g, staffMember.id);
     staffTemplate = staffTemplate.replace(/%_NAME_%/g, staffMember.name);
     staffTemplate = staffTemplate.replace(/%_STATUS_%/g, staffMember.status);
     staffTemplate = staffTemplate.replace(/%_SERVICES_%/g, staffMember.services);
 
-    staffTemplate = staffTemplate.replace(/%_SERVING_%/g, staffMember.serving.name);
-		staffTemplate = staffTemplate.replace(/%_SERVICE_%/g, staffMember.serving.service);
-		staffTemplate = staffTemplate.replace(/%_DURATION_%/g, staffMember.serving.duration);
-		staffTemplate = staffTemplate.replace(/%_START_%/g, staffMember.serving.start);
+    staffTemplate = staffTemplate.replace(/%_SERVING_%/g, staffMember.serving.name || "");
+		staffTemplate = staffTemplate.replace(/%_SERVICE_%/g, staffMember.serving.service || "");
+		staffTemplate = staffTemplate.replace(/%_DURATION_%/g, staffMember.serving.duration || "");
+		staffTemplate = staffTemplate.replace(/%_START_%/g, staffMember.serving.start || "");
 
 	staffWrapper.innerHTML += staffTemplate;
 };
@@ -464,15 +472,19 @@ const createQueue = () => {
 	 queueCreate(formData).then((queueData) => {
 		 console.log("createQueue()", JSON.parse(queueData));
 		 localQueueData = JSON.parse(queueData);
+		 let queueId = JSON.parse(queueData).queues.pop().id;
+		 document.querySelector("#queueSelect").value = queueId;
+		 SELECTED_QUEUE.id = queueId;
 		 getQueueById();
-		 getAllQueues();
+		 getAllQueues(queueId);
+
 	 });
 };
 
 
 const getQueueById = (e) => {
 	let id;
-	if (e && e.target.nodeName == "BUTTON" || !SELECTED_QUEUE) {
+	if (e && e.target.nodeName == "SELECT" || !SELECTED_QUEUE) {
 		id = document.querySelector("#queueSelect").value;
 	} else if (SELECTED_QUEUE){
 		id = SELECTED_QUEUE.id;
@@ -526,7 +538,7 @@ const getQueueById = (e) => {
 // ===================================================
 // get all queues and add them to dropdown list...
 // ===================================================
-const getAllQueues = () => {
+const getAllQueues = (queueId) => {
 	queuesGetAll().then((queueData) => {
 		let allQueues = JSON.parse(queueData).queues;
 		const queueSelectEl = document.querySelector("#queueSelect");
@@ -535,6 +547,9 @@ const getAllQueues = () => {
 			console.log("queue id", queue.id);
 			let opt = document.createElement("OPTION");
 			opt.innerHTML = queue.id;
+			if (queue.id == queueId) {
+				opt.selected = true;
+			}
 			queueSelectEl.appendChild(opt);
 		}
 		console.log("getAllQueues(): ", JSON.parse(queueData));

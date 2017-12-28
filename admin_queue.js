@@ -401,12 +401,15 @@ const serveCustomerComplete = (e) => {
 // };
 
 const resetAllDatabases = () => {
-	TOTAL_RESET().then((response) => {
-		console.warn(response);
-		getAllQueues();
-		queueSelect.options[0].selected = true;
-		getQueueById();
-	});
+	let authPattern = /((http:\/\/)?localhost:|user\=zooduck)/;
+	if (location.href.match(authPattern)) {
+		TOTAL_RESET().then((response) => {
+			console.warn(response);
+			getAllQueues();
+			queueSelect.options[0].selected = true;
+			getQueueById();
+		});
+	} else alert("DATABASES CAN ONLY BE RESET IF PROJECT RUNNING LOCALLY!");
 };
 
 

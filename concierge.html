@@ -13,7 +13,13 @@
 				box-sizing: border-box;
 
 			}
-			body, button, select, label {
+			body {
+				/*min-width: 950px;*/
+				width: 950px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			body, button, select, label, input {
 				font: normal 16px calibri, sans-serif;
 			}
 			select {
@@ -21,9 +27,18 @@
 			}
 
 			#servicesAvailable {
-				position: absolute;
-				top: 5px;
-				right: 5px;
+				float: left;
+				clear: left;
+
+				margin-left: 10px;
+				width: 370px;
+				/*height: 130px;
+				overflow-y: auto;*/
+
+				/*width: 100%;*/
+				margin-top: 10px;
+				/*top: 5px;
+				right: 5px;*/
 				padding: 10px;
 				background: lightblue;
 			}
@@ -40,7 +55,8 @@
 				padding: 10px;
 			}
 			.staff, .customers{
-				max-height: 500px;
+				/*max-height: 500px;*/
+				max-height: calc(100vh - 420px);
 				overflow-x: hidden;
 				overflow-y: auto;
 			}
@@ -68,6 +84,9 @@
 				margin-left: 10px;
 			}
 			.staff .staff__serving {
+				font-size: 24px;
+			}
+			.staff .staff__duration-left {
 				font-size: 24px;
 			}
 			.customers .customer{
@@ -115,16 +134,26 @@
 
 
 			.queue-create-form-wrapper, .add-customer-form-wrapper {
-				float: left;
-				clear: left;
+				position: relative;
+				float: right;
+			 	background: #fff;
 				margin-left: 10px;
-				margin-top: 10px;
+				margin-top: -60px;
 				border: solid 1px;
 				padding: 10px;
+				width: 220px;
+				height: 300px;
+				overflow: auto;
+			}
+			.queue-create-form-wrapper input[type=text], .add-customer-form-wrapper input[type=text] {
+				width: 100%;
 			}
 
+
+
 			.queue-create-form-wrapper {
-				margin-top: 40px;
+				/*margin-top: 40px;*/
+
 			}
 
 			.queue-select-wrapper {
@@ -144,14 +173,18 @@
 
 			#queueNameHeader {
 				float: left;
+				margin-top: 10px;
 				margin-left: 10px;
 				/*margin-top: 40px;*/
 				background: tomato;
 				color: #fff;
 				padding: 10px;
+				width: 200px;
+				word-break: break-word;
 			}
 			#queueNameHeader h1 {
-				line-height: 1px;
+				margin: 0;
+				/*line-height: 1px;*/
 			}
 
 
@@ -166,6 +199,10 @@
 				right: 5px;
 			}
 
+			.service-selection-ctrls-wrapper {
+				margin-top: 10px;
+			}
+
 
 		</style>
 
@@ -177,48 +214,51 @@
 		<button id="resetDatabase" class="reset-database" onclick="resetAllDatabases()">RESET</button>
 		<button id="stopPoll" class="stop-poll" onclick="stopPoll()">STOP POLL</button>
 
+		<!-- CURRENT QUEUE ID -->
+		<div class="queue-name-header" id="queueNameHeader" style="display: none;"><h1>&nbsp;</h1></div>
 
-		<div id="servicesAvailable"></div>
-
-
-		<div class="queue-name-header" id="queueNameHeader"><h1></h1></div>
-
-			<!-- SELECT QUEUE -->
+			<!-- SWITCH QUEUE -->
 		<div class="queue-select-wrapper">
 			<label>SWITCH</label> <select id="queueSelect" onchange="getQueueById(event)"></select>
 		</div>
 
+
+		<!-- SERVICES LIST -->
+		<div id="servicesAvailable"></div>
+
+		<!-- ADD CUSTOMER TO QUEUE -->
+		<div class="add-customer-form-wrapper">
+			<h2 style="line-height: 1px">Add Customer</h2>
+			<form id="customerAdd">
+				<label style="font-weight: bold;">Name:</label> <input name="name" type="text" />
+				<div class="service-selection-ctrls-wrapper"><span style="font-weight: bold;">Service: </span><!-- service radio buttons --></div>
+			</form>
+			<button onclick="addCustomerToQueue()" style="position: absolute; bottom: 10px; right: 10px;">Add</button>
+		</div>
+
+		<!-- CREATE QUEUE -->
+		<div class="queue-create-form-wrapper">
+			<h2 style="line-height: 1px;">Create Queue</h2>
+			<form id="queueCreate">
+				<label style="font-weight: bold;">Name:</label> <input name="id" type="text" />
+				<div class="service-selection-ctrls-wrapper"><span style="font-weight: bold;">Services: </span><!-- service checkboxes --></div>
+			</form>
+			<button onclick="createQueue()" style="position: absolute; bottom: 10px; right: 10px;">Create</button>
+		</div>
+
+
+
 		<content>
+			<div>
+				<div style="float: left; width: 50%; text-align: center; cursor: pointer;"><h1 style="margin-bottom: 5px;" onclick="buildView({detailLevel: 'high'});">Staff</h1></div>
+				<div style="float: left; width: 50%; text-align: center;"><h1 style="margin-bottom: 5px;">Queue</h1></div>
+			</div>
 			<div id="staff" class="staff"></div>
 			<div id="customers" class="customers"></div>
 
-			<!-- CREATE QUEUE -->
-			<div class="queue-create-form-wrapper">
-				<form id="queueCreate">
-					<label>Queue Name:</label> <input name="id" type="text" />
-					<!-- <label>tire_fit</label><input type="checkbox" name="tire_fit" />
-					<label>mot</label><input type="checkbox" name="mot" />
-					<label>car_wash</label><input type="checkbox" name="car_wash" />
-					<label>exhaust_fit</label><input type="checkbox" name="exhaust_fit" />
-					<label>wheelbalance</label><input type="checkbox" name="wheelbalance" />
-					<label>oil_change</label><input type="checkbox" name="oil_change" /> -->
-				</form>
-				<button onclick="createQueue()">CREATE QUEUE</button>
-		  	</div>
 
-		  	<!-- ADD CUSTOMER TO QUEUE -->
-		  	<div class="add-customer-form-wrapper">
-		  		<form id="customerAdd">
-		  			<label>Customer Name:</label><input name="name" type="text" />
-		  			<!-- <label>tire_fit</label><input type="radio" name="service" value="tire_fit" />
-						<label>mot</label><input type="radio" name="service" value="mot" />
-						<label>car_wash</label><input type="radio" name="service" value="car_wash" />
-						<label>exhaust_fit</label><input type="radio" name="service" value="exhaust_fit" />
-						<label>wheelbalance</label><input type="radio" name="service" value="wheelbalance" />
-						<label>oil_change</label><input type="radio" name="service" value="oil_change" /> -->
-		  		</form>
-		  		<button onclick="addCustomerToQueue()">ADD CUSTOMER TO QUEUE</button>
-		  	</div>
+
+
 
 
 		</content>

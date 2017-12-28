@@ -163,6 +163,7 @@ if ($endpoint == "CUSTOMER_SERVE_COMPLETE") {
 			$staffObj["staff"][$key]["serving"]["service"] = "";
 			$staffObj["staff"][$key]["serving"]["duration"] = "";
 			$staffObj["staff"][$key]["serving"]["start"] = "";
+			$staffObj["staff"][$key]["serving"]["queueId"] = "";
 		}
 	}
 
@@ -221,6 +222,7 @@ if ($endpoint == "CUSTOMER_SERVE") {
 				$staffObj["staff"][$key]["serving"]["service"] = $service;
 				$staffObj["staff"][$key]["serving"]["duration"] = $duration;
 				$staffObj["staff"][$key]["serving"]["start"] = $start;
+				$staffObj["staff"][$key]["serving"]["queueId"] = $queueId;
 			}
 		}
 

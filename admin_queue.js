@@ -157,29 +157,37 @@ const staffUpdateRemainTime = () => {
 
 			//debugger
 
-			document.querySelector(`#${staffMember.id}`).children[10].innerHTML = `REMAIN_MINUTES: ${remainMinutes}`;
+			//document.querySelector(`#${staffMember.id}`).children[10].innerHTML = `REMAIN_MINUTES: ${remainMinutes}`;
+
+
+			document.querySelector(`#${staffMember.id}`).lastChild.innerHTML = `duration_left: ${remainMinutes} minutes`;
 		}
 	}
 }
 
 
-const generateStaffTemplate = () => {
+const generateStaffTemplate = (options = {detailLevel: "low"}) => {
 	 let staffTemplate = "<div class=\"staff__member %_STATUS_%\" id=\"%_ID_%\">";
-	    staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomer(event)\" %_SERVE_%>Serve</button>";
+
+			staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomer(event)\" %_SERVE_%>Serve</button>";
 			staffTemplate += "<button class=\"staff--action-button\" onclick=\"serveCustomerComplete(event)\" %_FINISH_SERVING_%>Finish Serving</button>";
 
-	    //staffTemplate += "<button class=\"staff--action-button\">%_STATUS_%</button>";
-			staffTemplate += "<div class=\"staff__status\">id: %_ID_%</div>";
-	    staffTemplate += "<div class=\"staff__name\">%_NAME_%</div>";
+	    if (options.detailLevel == "high") {
+				staffTemplate += "<div class=\"staff__status\">id: %_ID_%</div>";
+				staffTemplate += "<div class=\"staff__services\">services: %_SERVICES_%</div>";
+				staffTemplate += "<div class=\"staff__status\">duration_minutes: %_DURATION_%</div>";
+				staffTemplate += "<div class=\"staff__status\">start: %_START_%</div>";
+			}
+
+	    staffTemplate += "<div class=\"staff__name\">name: %_NAME_%</div>";
     	staffTemplate += "<div class=\"staff__status\">status: %_STATUS_%</div>";
-    	staffTemplate += "<div class=\"staff__services\">services: %_SERVICES_%</div>";
 
-			staffTemplate += "<div class=\"staff__serving\">serving: %_SERVING_%</div>";
+
+			staffTemplate += "<div class=\"staff__serving\">serving: %_SERVING_% %_QUEUE_ID_%</div>";
 			staffTemplate += "<div class=\"staff__status\">service: %_SERVICE_%</div>";
-			staffTemplate += "<div class=\"staff__status\">duration_minutes: %_DURATION_%</div>";
-			staffTemplate += "<div class=\"staff__status\">start: %_START_%</div>";
 
-			staffTemplate += "<div class=\"staff__name\">REMAIN_MINUTES:</div>";
+
+			staffTemplate += "<div class=\"staff__duration-left\">duration_left:</div>";
 
     	staffTemplate += "</div>";
     return staffTemplate;
@@ -189,15 +197,15 @@ const generateCustomerTemplate = () => {
 	    customerTemplate += "<button class=\"customer--action-button customer--remove\">Remove</button>";
 	    customerTemplate += "<div class=\"customer__ticket-ref\">%_TICKET_REF_%</div>";
 			customerTemplate += "<div class=\"customer__service\">id: %_ID_%</div>";
-	    customerTemplate += "<div class=\"customer__name\">%_NAME_%</div>";
+	    customerTemplate += "<div class=\"customer__name\">name: %_NAME_%</div>";
 			customerTemplate += "<div class=\"customer__service\">status: %_STATUS_%</div>";
 	    customerTemplate += "<div class=\"customer__service\">service: %_SERVICE_%</div>";
     	customerTemplate += "<div class=\"customer__wait-time\">estimated wait time: %_WAIT_TIME_%</div>";
     	customerTemplate += "</div>";
     return customerTemplate;
 };
-const addStaffMemberToDOM = (staffMember) => {
-	let staffTemplate = generateStaffTemplate();
+const addStaffMemberToDOM = (staffMember, options) => {
+	  let staffTemplate = generateStaffTemplate(options);
 
 		if (staffMember.status === "available") {
 			staffTemplate = staffTemplate.replace(/%_FINISH_SERVING_%/, "hidden");
@@ -212,6 +220,12 @@ const addStaffMemberToDOM = (staffMember) => {
     staffTemplate = staffTemplate.replace(/%_SERVICES_%/g, staffMember.services);
 
     staffTemplate = staffTemplate.replace(/%_SERVING_%/g, staffMember.serving.name || "");
+		if (staffMember.serving.queueId) {
+			staffTemplate = staffTemplate.replace(/%_QUEUE_ID_%/g, `from ${staffMember.serving.queueId}`);
+		} else {
+			staffTemplate = staffTemplate.replace(/%_QUEUE_ID_%/g, "");
+		}
+
 		staffTemplate = staffTemplate.replace(/%_SERVICE_%/g, staffMember.serving.service || "");
 		staffTemplate = staffTemplate.replace(/%_DURATION_%/g, staffMember.serving.duration || "");
 		staffTemplate = staffTemplate.replace(/%_START_%/g, staffMember.serving.start || "");
@@ -247,29 +261,41 @@ const getServices = () => {
 const addServiceCheckboxAndRadios = () => {
 	let customerAddForm = document.querySelector("#customerAdd");
 	for (serviceName in localServicesData) {
+		let div = document.createElement("DIV");
 		let label = document.createElement("LABEL");
 		let input = document.createElement("INPUT");
 		input.setAttribute("type", "radio");
 		input.setAttribute("name", "service");
 		label.innerHTML = serviceName;
 		input.value = serviceName;
-		customerAddForm.appendChild(label);
-		customerAddForm.appendChild(input);
+		div.appendChild(input);
+		div.appendChild(label);
+
+		customerAddForm.querySelector(".service-selection-ctrls-wrapper").appendChild(div);
+
+		// customerAddForm.querySelector(".service-selection-ctrls-wrapper").appendChild(label);
+		// customerAddForm.querySelector(".service-selection-ctrls-wrapper").appendChild(input);
 	}
 	let queueCreateForm = document.querySelector("#queueCreate");
 	for (serviceName in localServicesData) {
+		let div = document.createElement("DIV");
 		let label = document.createElement("LABEL");
 		let input = document.createElement("INPUT");
 		input.setAttribute("type", "checkbox");
 		input.setAttribute("name", serviceName);
 		label.innerHTML = serviceName;
 		input.value = serviceName;
-		queueCreateForm.appendChild(label);
-		queueCreateForm.appendChild(input);
+		div.appendChild(input);
+		div.appendChild(label);
+
+		queueCreateForm.querySelector(".service-selection-ctrls-wrapper").appendChild(div);
+
+		// queueCreateForm.querySelector(".service-selection-ctrls-wrapper").appendChild(label);
+		// queueCreateForm.querySelector(".service-selection-ctrls-wrapper").appendChild(input);
 	}
 }
 
-const buildView = () => {
+const buildView = (options) => {
 
 	let services = localQueueData.services;
 	let staff = localQueueData.staff;
@@ -280,14 +306,14 @@ const buildView = () => {
 
 	clearView();
 
-	servicesAvailableWrapper.innerHTML = `SERVICES: ${services.join(", ")}`;
+	servicesAvailableWrapper.innerHTML = services.join(", ");
 
 	for (let staffMember of staff) {
 		let result = staffMember.services.find(function(service) {
 			return localQueueData.services.indexOf(service) != -1;
 		});
 		if (result) {
-			addStaffMemberToDOM(staffMember);
+			addStaffMemberToDOM(staffMember, options);
 		} else {
 			console.warn(`${staffMember.name} does not support any of the services for this queue!`);
 		}
@@ -309,12 +335,12 @@ const buildView = () => {
 	let customerAddServiceRadioButtons = document.querySelectorAll("#customerAdd input[type=radio]");
 	for (let radioButton of customerAddServiceRadioButtons) {
 		radioButton.removeAttribute("hidden");
-		radioButton.previousSibling.removeAttribute("hidden");
+		radioButton.nextSibling.removeAttribute("hidden");
 	}
 	for (let radioButton of customerAddServiceRadioButtons) {
 		if (localQueueData.services.indexOf(radioButton.value) == -1) {
 			radioButton.setAttribute("hidden", true);
-			radioButton.previousSibling.setAttribute("hidden", true);
+			radioButton.nextSibling.setAttribute("hidden", true);
 		}
 	}
 };

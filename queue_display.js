@@ -39,7 +39,7 @@ const getAllQueues = () => {
       inQueueWrapper.appendChild(headerB);
       let customersBeingSeen = false;
       for (let customer of queue.customers) {
-        let div = createDiv(customer.ticketRef);
+        let div = createDiv(`${customer.ticketRef} ${customer.name}`);
         if (customer.status == "being_seen") {
           customersBeingSeen = true;
           beingSeenWrapper.appendChild(div);
